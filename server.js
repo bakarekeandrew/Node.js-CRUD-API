@@ -8,9 +8,8 @@ require('./task.json')
 
 const server = http.createServer((req,res)=>{
     if(req.url === '/todo' && req.method === 'GET'){
-        const tasks = JSON.parse(fs.readFileSync('task.json', 'utf-8'));
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(tasks));
+        const tasks = JSON.parse(fs.readFileSync('task.json', 'utf-8'))
+        res.end(JSON.stringify(tasks))
 
     }
     else if(req.url === '/todo' && req.method === 'POST'){
