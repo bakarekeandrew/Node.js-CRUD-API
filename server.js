@@ -32,9 +32,23 @@ const server = http.createServer((req,res)=>{
 
 
         }) 
+
+    }else if (req.url.startsWith('/todo') && req.method === 'GET') {
+
+        const id = Number(req.url.split('/')[2]);
+        const tasks = JSON.parse(fs.readFileSync('task.json', 'utf-8'));
+
+        if (id) {
+            const result = tasks.filter(task => task.id === id);
+            res.end(JSON.stringify(result));
+        } else {
+            res.end(JSON.stringify(tasks));
+        }
+
+    }    
       
     //search parameter    
-    }else if(req.url.startsWith('/todo') && req.method === 'GET'){
+    else if(req.url.startsWith('/todo') && req.method === 'GET'){
         const urlObj = new URL(req.url, `http://${req.headers.host}`)
         const status = urlObj.searchParams.get("status")
         let tasks = JSON.parse(fs.readFileSync('task.json', 'utf-8'))
@@ -47,6 +61,7 @@ const server = http.createServer((req,res)=>{
            res.end(JSON.stringify({message: "error while searching"}))
         }
     }
+
     else{
         res.writeHead(404, {'Content-Type': 'application/json'})
         res.end(JSON.stringify({message: "page not found!"}))
