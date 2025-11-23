@@ -64,21 +64,36 @@ const server = http.createServer((req,res)=>{
 
     
     //Put router
-    else if(req.url.startsWith('/todo') && req.method === "POST"){
-        const id = Number(req.url.split('/')[2])
-        let tasks = JSON.parse(fs.readFileSync('task.json','utf-8'))
-        let body = ""
-        req.on("data", chunk =>{
-            body += chunk
-        })
-        req.on("end", ()=>{
-            const newTask = JSON.parse(body)
-            if(id){
-               tasks = tasks.filter(task => task.id = id) 
-            }
+    else if (req.url.startsWith('/todo/') && req.method === 'PUT') {
 
-        })
+    const id = Number(req.url.split('/')[2]); // Extract ID from the URL
+    let tasks = JSON.parse(fs.readFileSync("task.json", "utf-8"));
+
+    let body = "";
+    req.on("data", chunk => body += chunk);
+
+    req.on("end", () => {
+        const updated = JSON.parse(body);
+
+        const index = tasks.findIndex(task => task.id === id);
+
+        if (index === -1) {
+            res.writeHead(404, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ message: "Task not found!" }));
+        }
+
+
+        tasks[index] = { ...tasks[index], ...updated };
+
+        fs.writeFileSync("task.json", JSON.stringify(tasks, null, 2));
+
+        res.end(JSON.stringify({
+            message: "Task updated successfully!",
+            task: tasks[index]
+        }));
+    });
     }
+
     else{
         res.writeHead(404, {'Content-Type': 'application/json'})
         res.end(JSON.stringify({message: "page not found!"}))
