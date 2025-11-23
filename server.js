@@ -65,7 +65,7 @@ const server = http.createServer((req,res)=>{
     
     //Put router
     else if(req.url.startsWith('/todo') && req.method === "POST"){
-        const id = req.url.split('/')[2]
+        const id = Number(req.url.split('/')[2])
         let tasks = JSON.parse(fs.readFileSync('task.json','utf-8'))
         let body = ""
         req.on("data", chunk =>{
@@ -74,7 +74,7 @@ const server = http.createServer((req,res)=>{
         req.on("end", ()=>{
             const newTask = JSON.parse(body)
             if(id){
-                
+               tasks = tasks.filter(task => task.id = id) 
             }
 
         })
