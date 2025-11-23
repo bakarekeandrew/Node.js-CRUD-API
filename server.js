@@ -62,6 +62,23 @@ const server = http.createServer((req,res)=>{
         }
     }
 
+    
+    //Put router
+    else if(req.url.startsWith('/todo') && req.method === "POST"){
+        const id = req.url.split('/')[2]
+        let tasks = JSON.parse(fs.readFileSync('task.json','utf-8'))
+        let body = ""
+        req.on("data", chunk =>{
+            body += chunk
+        })
+        req.on("end", ()=>{
+            const newTask = JSON.parse(body)
+            if(id){
+                
+            }
+
+        })
+    }
     else{
         res.writeHead(404, {'Content-Type': 'application/json'})
         res.end(JSON.stringify({message: "page not found!"}))
