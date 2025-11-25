@@ -66,7 +66,7 @@ const server = http.createServer((req,res)=>{
     //Put router
     else if (req.url.startsWith('/todo/') && req.method === 'PUT') {
 
-    const id = Number(req.url.split('/')[2]); // Extract ID from the URL
+    const id = Number(req.url.split('/')[2]); 
     let tasks = JSON.parse(fs.readFileSync("task.json", "utf-8"));
 
     let body = "";
@@ -93,6 +93,31 @@ const server = http.createServer((req,res)=>{
         }));
     });
     }
+    // DELETE route
+    else if (req.url.startsWith('/todo/') && req.method === 'DELETE') {
+
+        const id = Number(req.url.split('/')[2]); 
+        let tasks = JSON.parse(fs.readFileSync("task.json", "utf-8"));
+
+        const index = tasks.findIndex(task => task.id === id);
+
+        if (index === -1) {
+            res.writeHead(404, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ message: "Task not found!" }));
+        }
+
+        // Remove the task
+        const deletedTask = tasks.splice(index, 1)[0];
+
+        // Save the updated list
+        fs.writeFileSync("task.json", JSON.stringify(tasks, null, 2));
+
+        res.end(JSON.stringify({
+            message: "Task deleted successfully!",
+            deleted: deletedTask
+        }));
+    }
+
 
     else{
         res.writeHead(404, {'Content-Type': 'application/json'})
